@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  django:
+    build: docker/django
+    container_name: rd_django
+    volumes:
+      - ./company:/usr/src/app
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+  postgres:
+    container_name: rd_postgres
+    image: postgres:14.0-alpine
+    volumes:
+      - ./docker/postgresql/data:/var/lib/postgresql/data/
+    ports:
+      - "5434:5432"
+    env_file:
+      - .env
