@@ -14,7 +14,7 @@ class Employee(AbstractUser):
     second_name = models.CharField(verbose_name='Фамилия', max_length=150, blank=True)
     middle_name = models.CharField(verbose_name='Отчество', max_length=150, blank=True)
     position = models.CharField(verbose_name='Должность', max_length=25, choices=EMPLOYEE_TYPES)
-    employment_date = models.DateField(verbose_name='Дата приёма на работу', null=True)
+    employment_date = models.DateField(verbose_name='Дата приёма на работу', null=True, blank=True)
     manager = models.ForeignKey(
         'self', verbose_name='Руководитель', blank=True, null=True, related_name='employee', on_delete=models.SET_NULL,
     )
