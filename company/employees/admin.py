@@ -23,7 +23,8 @@ class EmployeeAdmin(admin.ModelAdmin):
                                               "у выбранных сотрудников"
 
     def get_fio(self, obj):
-        return f"{obj.second_name} {obj.first_name} {obj.middle_name}"
+        fio = f"{obj.second_name} {obj.first_name} {obj.middle_name}"
+        return fio if fio != "  " else " - "
     get_fio.short_description = "ФИО"
 
     def get_manager_link(self, obj):
