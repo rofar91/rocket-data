@@ -8,8 +8,12 @@ from .models import Employee, SalaryHistory
 
 @register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    fields = ('second_name', 'first_name', 'middle_name', 'position', 'employment_date', 'manager', 'salary',
-              'is_staff')
+    fieldsets = (
+        (None, {'fields': (
+            'second_name', 'first_name', 'middle_name', 'position', 'employment_date', 'manager', 'salary',
+        )}),
+        ('Permissions', {'fields': ('username', 'is_staff', 'is_active')}),
+    )
     list_display = ('get_fio', 'position', 'get_manager_link', 'salary', 'total_paid')
     list_filter = ('position', 'hierarchy_level')
     search_fields = ('second_name', )
