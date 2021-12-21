@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0']
 
+AUTH_USER_MODEL = 'employees.Employee'
+
 
 # Application definition
 
@@ -37,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'employees.apps.EmployeesConfig',
 ]
 
 MIDDLEWARE = [
