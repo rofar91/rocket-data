@@ -34,8 +34,8 @@ class Employee(AbstractUser):
 
         # do not create more than one employee with level = 0
         if self.hierarchy_level == 0:
-            top_employee = Employee.objects.filter(hierarchy_level=0).count()
-            if top_employee:
+            top_employee = Employee.objects.get(hierarchy_level=0)
+            if top_employee and top_employee.id != self.id:
                 return
 
         # do not create more than 4 levels hierarchy
