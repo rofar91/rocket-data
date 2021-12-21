@@ -10,7 +10,9 @@ from .models import Employee, SalaryHistory
 class EmployeeAdmin(admin.ModelAdmin):
     fields = ('second_name', 'first_name', 'middle_name', 'position', 'employment_date', 'manager', 'salary')
     list_display = ('get_fio', 'position', 'get_manager_link', 'salary', 'total_paid')
-    list_filter = ('position', 'hierarchy_level', )
+    list_filter = ('position', 'hierarchy_level')
+    search_fields = ('second_name', )
+    search_help_text = 'Поиск по фамилии'
     actions = ['delete_salary_history']
 
     def delete_salary_history(self, request, queryset):
