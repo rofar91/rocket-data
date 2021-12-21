@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Sum
 
 
 class Employee(AbstractUser):
@@ -47,6 +48,12 @@ class Employee(AbstractUser):
             return
 
         super().save(*args, **kwargs)
+
+    @property
+    def total_paid(self):
+        result = self.salary_history.aggregate(total=Sum('amount_of_payment'))
+        return result.get('total')
+    total_paid.fget.short_description = "Всего выплачено"
 
 
 class SalaryHistory(models.Model):
