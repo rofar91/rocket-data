@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Sum
 
+MAX_HIERARCHY_LEVEL = 4
+
 
 class Employee(AbstractUser):
     EMPLOYEE_TYPES = (
@@ -23,18 +25,21 @@ class Employee(AbstractUser):
     salary = models.FloatField(blank=True, null=True)
 
     class Meta:
+        ordering = ['second_name']
         verbose_name = 'сотрудник'
         verbose_name_plural = 'Сотрудники'
 
     def __str__(self):
-        return f'{self.second_name} {self.first_name} {self.middle_name} - {self.position}'
+        return self.display_name + ' - ' + self.position
 
     def save(self, *args, **kwargs):
         if self.manager:
-            self.hierarchy_level = self.manager.hierarchy_level + 1
+            if self.manager.hierarchy_level == MAX_HIERARCHY_LEVEL:
+                self.hierarchy_level = self.manager.hierarchy_level  # Don't create hierarchy level more than max
+            else:
+                self.hierarchy_level = self.manager.hierarchy_level + 1
 
-        # do not create more than one employee with level = 0
-        if self.hierarchy_level == 0:
+        else:  # Don't create more than one employee with level = 0
             try:
                 top_employee = Employee.objects.get(hierarchy_level=0)
             except Employee.DoesNotExist:
@@ -43,17 +48,17 @@ class Employee(AbstractUser):
             if top_employee.id != self.id:
                 return
 
-        # do not create more than 4 levels hierarchy
-        if self.hierarchy_level > 4:
-            return
-
         super().save(*args, **kwargs)
+
+    @property
+    def display_name(self):
+        return f'{self.second_name} {self.first_name} {self.middle_name}'
 
     @property
     def total_paid(self):
         result = self.salary_history.aggregate(total=Sum('amount_of_payment'))
         return result.get('total')
-    total_paid.fget.short_description = "Всего выплачено"
+    total_paid.fget.short_description = 'Всего выплачено'
 
 
 class SalaryHistory(models.Model):
