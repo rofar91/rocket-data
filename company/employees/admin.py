@@ -3,7 +3,7 @@ from django.contrib.admin import register
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Employee, SalaryHistory
+from .models import Employee, SalaryHistory, Rank
 
 
 @register(Employee)
@@ -15,7 +15,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         ('Permissions', {'fields': ('username', 'is_staff', 'is_active')}),
     )
     list_display = ('get_fio', 'position', 'get_manager_link', 'salary', 'total_paid')
-    list_filter = ('position', 'hierarchy_level')
+    list_filter = ('position__title', 'hierarchy_level')
     search_fields = ('second_name',)
     search_help_text = 'Поиск по фамилии'
     actions = ['delete_salary_history']
@@ -43,7 +43,8 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 @register(SalaryHistory)
 class SalaryHistoryAdmin(admin.ModelAdmin):
-    list_filter = ('add_date', )
+    list_filter = ('add_date',)
 
 
+admin.site.register(Rank)
 admin.site.site_header = 'RocketData'

@@ -12,6 +12,7 @@ class SalaryHistorySerializer(serializers.ModelSerializer):
 class EmployeeSerializer(serializers.ModelSerializer):
     manager = serializers.StringRelatedField()
     salary_history = SalaryHistorySerializer(many=True)
+    position = serializers.CharField(source='position.title')
 
     class Meta:
         model = Employee
