@@ -47,15 +47,6 @@ class Employee(AbstractUser):
             else:
                 self.hierarchy_level = self.manager.hierarchy_level + 1
 
-        else:  # Don't create more than one employee with level = 0
-            try:
-                top_employee = Employee.objects.get(hierarchy_level=0)
-            except Employee.DoesNotExist:
-                super().save(*args, **kwargs)
-                return
-            if top_employee.id != self.id:
-                return
-
         super().save(*args, **kwargs)
 
     @property
