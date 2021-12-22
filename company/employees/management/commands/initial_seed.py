@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         # seed salary history used django-seed
         seeder = Seed.seeder()
-        seeder.add_entity(SalaryHistory, 20, {
+        seeder.add_entity(SalaryHistory, 10, {
             'employee': lambda x: Employee.objects.get(id=random.randint(1, 5)),
             'amount_of_payment': lambda x: random.randint(1, 1234567890)/100,
         })

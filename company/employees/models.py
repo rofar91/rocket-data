@@ -19,7 +19,7 @@ class Rank(models.Model):
 
 class Employee(AbstractUser):
     first_name = models.CharField(verbose_name='Имя', max_length=150, blank=True)
-    second_name = models.CharField(verbose_name='Фамилия', max_length=150, blank=True)
+    last_name = models.CharField(verbose_name='Фамилия', max_length=150, blank=True)
     middle_name = models.CharField(verbose_name='Отчество', max_length=150, blank=True)
     position = models.ForeignKey(Rank, verbose_name='Должность', null=True, on_delete=models.SET_NULL)
     employment_date = models.DateField(verbose_name='Дата приёма на работу', null=True, blank=True)
@@ -32,7 +32,7 @@ class Employee(AbstractUser):
     )
 
     class Meta:
-        ordering = ['second_name']
+        ordering = ['last_name']
         verbose_name = 'сотрудник'
         verbose_name_plural = 'Сотрудники'
 
@@ -46,12 +46,14 @@ class Employee(AbstractUser):
                 self.hierarchy_level = self.manager.hierarchy_level  # Don't create hierarchy level more than max
             else:
                 self.hierarchy_level = self.manager.hierarchy_level + 1
+        else:
+            self.hierarchy_level = 0
 
         super().save(*args, **kwargs)
 
     @property
     def display_name(self):
-        return f'{self.second_name} {self.first_name} {self.middle_name}'
+        return f'{self.last_name} {self.first_name} {self.middle_name}'
 
     @property
     def total_paid(self):

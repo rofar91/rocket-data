@@ -10,13 +10,13 @@ from .models import Employee, SalaryHistory, Rank
 class EmployeeAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': (
-            'second_name', 'first_name', 'middle_name', 'position', 'employment_date', 'manager', 'salary',
+            'last_name', 'first_name', 'middle_name', 'position', 'employment_date', 'manager', 'salary',
         )}),
         ('Permissions', {'fields': ('username', 'is_staff', 'is_active')}),
     )
     list_display = ('get_fio', 'position', 'get_manager_link', 'salary', 'total_paid')
     list_filter = ('position__title', 'hierarchy_level')
-    search_fields = ('second_name',)
+    search_fields = ('last_name',)
     search_help_text = 'Поиск по фамилии'
     actions = ['delete_salary_history']
 
