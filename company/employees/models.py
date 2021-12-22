@@ -5,24 +5,31 @@ from django.db.models import Sum
 MAX_HIERARCHY_LEVEL = 4
 
 
+class Rank(models.Model):
+    title = models.CharField(verbose_name='Должность', max_length=25, unique=True)
+
+    class Meta:
+        ordering = ['title']
+        verbose_name = 'Должность'
+        verbose_name_plural = 'Должности'
+
+    def __str__(self):
+        return self.title
+
+
 class Employee(AbstractUser):
-    EMPLOYEE_TYPES = (
-        ('Генеральный директор', 'Генеральный директор'),
-        ('Руководитель', 'Руководитель'),
-        ('Менеджер среднего звена', 'Менеджер среднего звена'),
-        ('Менеджер', 'Менеджер'),
-        ('Работник', 'Работник'),
-    )
     first_name = models.CharField(verbose_name='Имя', max_length=150, blank=True)
     second_name = models.CharField(verbose_name='Фамилия', max_length=150, blank=True)
     middle_name = models.CharField(verbose_name='Отчество', max_length=150, blank=True)
-    position = models.CharField(verbose_name='Должность', max_length=25, choices=EMPLOYEE_TYPES)
+    position = models.ForeignKey(Rank, verbose_name='Должность', null=True, on_delete=models.SET_NULL)
     employment_date = models.DateField(verbose_name='Дата приёма на работу', null=True, blank=True)
     manager = models.ForeignKey(
         'self', verbose_name='Руководитель', blank=True, null=True, related_name='employee', on_delete=models.SET_NULL,
     )
     hierarchy_level = models.SmallIntegerField(verbose_name='Уровень', default=0)
-    salary = models.FloatField(blank=True, null=True)
+    salary = models.DecimalField(
+        verbose_name='Заработная плата', decimal_places=2, max_digits=10, blank=True, null=True,
+    )
 
     class Meta:
         ordering = ['second_name']
@@ -30,7 +37,8 @@ class Employee(AbstractUser):
         verbose_name_plural = 'Сотрудники'
 
     def __str__(self):
-        return self.display_name + ' - ' + self.position
+        position_title = f' - {self.position.title}' if self.position else ''
+        return self.display_name + position_title
 
     def save(self, *args, **kwargs):
         if self.manager:
