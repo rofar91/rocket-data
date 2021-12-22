@@ -1,0 +1,74 @@
+[
+  {
+    "model": "employees.employee",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$320000$40oXW7BjP6YO7ItOuBOewp$Xd18+x0FDBiBJXI047VNvXk5XSZ9xnilaE+tNpsZeos=",
+      "is_superuser": true,
+      "username": "dima",
+      "is_staff": true,
+      "is_active": true,
+      "first_name": "Дмитрий",
+      "second_name": "Абрамович",
+      "middle_name": "Иванович",
+      "position": 1,
+      "employment_date": "2021-12-22",
+      "manager": null,
+      "hierarchy_level": 0,
+      "salary": "20000.00"
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 2,
+    "fields": {
+      "username": "developer",
+      "first_name": "Сергей",
+      "second_name": "Лашкевич",
+      "position": 2,
+      "employment_date": "2021-12-22",
+      "manager": 1,
+      "hierarchy_level": 1,
+      "salary": "50000.00"
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 3,
+    "fields": {
+      "username": "test2",
+      "second_name": "Сидоров",
+      "position": 3,
+      "employment_date": "2021-12-22",
+      "manager": 2,
+      "hierarchy_level": 2,
+      "salary": "15000.00"
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 4,
+    "fields": {
+      "username": "test3",
+      "second_name": "Петров",
+      "position": 4,
+      "employment_date": "2021-12-22",
+      "manager": 3,
+      "hierarchy_level": 3,
+      "salary": "10000.00"
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 5,
+    "fields": {
+      "username": "test4",
+      "second_name": "Иванов",
+      "position": 5,
+      "employment_date": "2021-12-22",
+      "manager": 4,
+      "hierarchy_level": 4,
+      "salary": "5000.00"
+    }
+  }
+]
