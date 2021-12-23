@@ -2,4 +2,4 @@
 
 set -o errexit
 
-docker-compose -f docker-compose.yml run --rm django python manage.py $@
+docker-compose -f docker-compose.yml run --rm web python manage.py $@

@@ -1,18 +1,30 @@
 version: '3.8'
 
 services:
-  django:
-    build: docker/django
-    container_name: rd_django
+  web:
+    build: docker/web
+    container_name: rd_web
     volumes:
       - ./company:/usr/src/app
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
-    depends_on:
-      - postgres
     env_file:
       - .env
+    depends_on:
+      - postgres
+
+  celery:
+    build: docker/web
+    container_name: rd_celery
+    volumes:
+      - ./company:/usr/src/app
+    command: celery -A company worker -B -l info
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
 
   postgres:
     container_name: rd_postgres
@@ -23,3 +35,26 @@ services:
       - "5434:5432"
     env_file:
       - .env
+
+  redis:
+    container_name: rd_redis
+    image: "redis:alpine"
+    volumes:
+      - ./docker/redis/data:/data
+    ports:
+      - "6379:6379"
+
+  flower:
+    build: docker/web
+    container_name: rd_flower
+    volumes:
+      - ./company:/usr/src/app
+    command: celery -A company flower --port=5555 --broker=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    depends_on:
+      - web
+      - redis
+      - celery
