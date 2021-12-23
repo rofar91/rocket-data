@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Sum
@@ -57,8 +59,10 @@ class Employee(AbstractUser):
 
     @property
     def total_paid(self):
-        result = self.salary_history.aggregate(total=Sum('amount_of_payment'))
-        return result.get('total')
+        result = self.salary_history.aggregate(total=Sum('amount_of_payment')).get('total')
+        if result:
+            return Decimal(result).quantize(Decimal('.01'))
+        return None
     total_paid.fget.short_description = 'Всего выплачено'
 
 
