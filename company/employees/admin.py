@@ -12,7 +12,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         (None, {'fields': (
             'last_name', 'first_name', 'middle_name', 'position', 'employment_date', 'manager', 'salary',
         )}),
-        ('Permissions', {'fields': ('username', 'is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('username', 'is_staff', 'is_active', 'groups')}),
     )
     list_display = ('get_fio', 'position', 'get_manager_link', 'salary', 'total_paid')
     list_filter = ('position__title', 'hierarchy_level')
