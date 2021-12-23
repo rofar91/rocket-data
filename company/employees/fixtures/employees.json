@@ -15,7 +15,10 @@
       "employment_date": "2021-12-22",
       "manager": null,
       "hierarchy_level": 0,
-      "salary": "20000.00"
+      "salary": "20000.00",
+      "groups": [
+        1
+      ]
     }
   },
   {
@@ -29,7 +32,10 @@
       "employment_date": "2021-12-22",
       "manager": 1,
       "hierarchy_level": 1,
-      "salary": "50000.00"
+      "salary": "50000.00",
+      "groups": [
+        1
+      ]
     }
   },
   {
