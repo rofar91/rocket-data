@@ -12,8 +12,9 @@ class Command(BaseCommand):
     help = 'Initial seed DB'
 
     def handle(self, *args, **options):
-        # seed ranks and employees from fixtures
+        # seed ranks, employees, groups from fixtures
         management.call_command('loaddata', 'ranks', verbosity=0)
+        management.call_command('loaddata', 'groups_permission', verbosity=0)
         management.call_command('loaddata', 'employees', verbosity=0)
 
         # seed salary history used django-seed
