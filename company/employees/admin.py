@@ -22,15 +22,14 @@ class EmployeeAdmin(admin.ModelAdmin):
     actions = ['delete_salary_history']
 
     def delete_salary_history(self, request, queryset):
-        if queryset.count() > 20:
-            employees_id = [employee_id.id for employee_id in queryset]
+        employees_id = request.POST.getlist('_selected_action')
+        if len(employees_id) > 20:
             async_delete_salary.delay(employees_id)
-            self.message_user(request, f'Будет сделано')
+            self.message_user(request, f'Будет сделано ;)')
         else:
-            salary = SalaryHistory.objects.filter(employee__in=queryset)
-            salary_count = salary.count()
+            salary = SalaryHistory.objects.filter(employee__in=employees_id)
             salary.delete()
-            self.message_user(request, f'Успешно удалены истории выплат заработной платы {salary_count}')
+            self.message_user(request, f'Успешно удалена информация о выплаченной заработной плате')
     delete_salary_history.short_description = 'Удалить всю информацию о выплаченной заработной плате ' \
                                               'у выбранных сотрудников'
 
