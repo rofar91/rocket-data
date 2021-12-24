@@ -13,3 +13,9 @@ def pay_salary():
     for employee in Employee.objects.all():
         if employee.salary:
             SalaryHistory.objects.create(employee=employee, amount_of_payment=employee.salary)
+
+
+@app.task
+def async_delete_salary(employees_id):
+    payments = SalaryHistory.objects.filter(employee_id__in=employees_id)
+    payments.delete()

@@ -26,6 +26,6 @@ class Command(BaseCommand):
         seeder.execute()
 
         # create token
-        Token.objects.create(user_id=1)
+        Token.objects.get_or_create(user_id=1)
 
         self.stdout.write(self.style.SUCCESS('Successfully seed DB'))

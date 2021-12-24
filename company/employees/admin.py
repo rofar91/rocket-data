@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from .models import Employee, SalaryHistory, Rank
+from .tasks import async_delete_salary
 
 
 @register(Employee)
@@ -21,10 +22,15 @@ class EmployeeAdmin(admin.ModelAdmin):
     actions = ['delete_salary_history']
 
     def delete_salary_history(self, request, queryset):
-        salary = SalaryHistory.objects.filter(employee__in=queryset)
-        salary_count = salary.count()
-        salary.delete()
-        self.message_user(request, f'Успешно удалены истории выплат заработной платы {salary_count}')
+        if queryset.count() > 20:
+            employees_id = [employee_id.id for employee_id in queryset]
+            async_delete_salary.delay(employees_id)
+            self.message_user(request, f'Будет сделано')
+        else:
+            salary = SalaryHistory.objects.filter(employee__in=queryset)
+            salary_count = salary.count()
+            salary.delete()
+            self.message_user(request, f'Успешно удалены истории выплат заработной платы {salary_count}')
     delete_salary_history.short_description = 'Удалить всю информацию о выплаченной заработной плате ' \
                                               'у выбранных сотрудников'
 
