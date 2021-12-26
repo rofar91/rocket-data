@@ -103,8 +103,8 @@ DATABASES = {
         'NAME': os.environ['POSTGRES_DB'],
         'USER': os.environ['POSTGRES_USER'],
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-        'HOST': os.environ['POSTGRES_HOST'],
-        'PORT': os.environ['POSTGRES_PORT'],
+        'HOST': 'rd_postgres',
+        'PORT': 5432,
     }
 }
 
@@ -152,3 +152,4 @@ STATIC_URL = '/static/'
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_TIMEZONE = TIME_ZONE
