@@ -18,25 +18,7 @@ class EmployeesEndpointsTests(APITestCase):
         user_not_in_group_api_customers = Employee.objects.get(id=3)
         self.token_user_not_in_group_api_customers = Token.objects.create(user=user_not_in_group_api_customers).key
 
-    def test_get_employees_for_user_in_group_api_customers_and_is_staff(self):
-        """
-        Тестируем получение информации о сотрудниках
-        пользователем который имеет статус персонала и состоит в группе 'api_customers'
-        """
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_is_staff}')
-        r = self.client.get('/api/employees/')
-        self.assertEqual(r.status_code, status.HTTP_200_OK)
-        self.assertEqual(r.json().get('count'), 5)  # получил информацию о всех 5 сотрудниках
-
-    def test_get_employees_for_user_in_group_api_customers(self):
-        """
-        Тестируем получение информации о сотрудниках
-        пользователем который состоит в группе 'api_customers', но не имеет статуса персонала
-        """
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_in_group_api_customers}')
-        r = self.client.get('/api/employees/')
-        self.assertEqual(r.status_code, status.HTTP_200_OK)
-        expected_result = {
+        self.expected_result = {
             'count': 1, 'next': None, 'previous': None,
             'results':
                 [
@@ -47,8 +29,27 @@ class EmployeesEndpointsTests(APITestCase):
                     }
                 ]
         }
+
+    def test_get_employees_for_user_in_group_api_customers_and_is_staff(self):
+        """
+        Тестируем получение информации о сотрудниках
+        пользователем который имеет статус персонала и состоит в группе 'api_customers'
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_is_staff}')
+        r = self.client.get('/api/employees/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.json().get('count'), 5)  # получил информацию о всех 5 сотрудниках которые есть в БД
+
+    def test_get_employees_for_user_in_group_api_customers_and_not_staff(self):
+        """
+        Тестируем получение информации о сотрудниках
+        пользователем который состоит в группе 'api_customers', но не имеет статуса персонала
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_in_group_api_customers}')
+        r = self.client.get('/api/employees/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
         self.assertEqual(r.json().get('count'), 1)  # получил информацию только о себе
-        self.assertEqual(r.json(), expected_result)
+        self.assertEqual(r.json(), self.expected_result)
 
     def test_get_employees_for_user_not_in_group_api_customers(self):
         """
@@ -57,5 +58,48 @@ class EmployeesEndpointsTests(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_not_in_group_api_customers}')
         r = self.client.get('/api/employees/')
+        self.assertEqual(r.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(r.json(), {'detail': 'У вас недостаточно прав для выполнения данного действия.'})
+
+    def test_get_employees_by_level_for_user_in_group_api_customers_and_is_staff(self):
+        """
+        Тестируем получение информации о сотрудниках по их уровням
+        пользователем который имеет статус персонала и состоит в группе 'api_customers',
+        постучался не на свой уровень
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_is_staff}')
+        r = self.client.get('/api/employees/level/1')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.json(), self.expected_result)
+
+    def test_get_employees_by_level_for_not_user_level(self):
+        """
+        Тестируем получение информации о сотрудниках по их уровням
+        пользователем который состоит в группе 'api_customers', но не имеет статуса персонала,
+        постучался не на свой уровень
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_in_group_api_customers}')
+        r = self.client.get('/api/employees/level/0')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.json(), {'count': 0, 'next': None, 'previous': None, 'results': []})
+
+    def test_get_employees_by_level_for_user_in_group_api_customers(self):
+        """
+        Тестируем получение информации о сотрудниках по их уровням
+        пользователем который состоит в группе 'api_customers', но не имеет статуса персонала,
+        постучался на свой уровень
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_in_group_api_customers}')
+        r = self.client.get('/api/employees/level/1')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.json(), self.expected_result)
+
+    def test_get_employees_by_level_for_user_not_in_group_api_customers(self):
+        """
+        Тестируем получение информации о сотрудниках по их уровням
+        пользователем который не имеет на это прав (не состоит в группе 'api_customers')
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token_user_not_in_group_api_customers}')
+        r = self.client.get('/api/employees/level/0')
         self.assertEqual(r.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(r.json(), {'detail': 'У вас недостаточно прав для выполнения данного действия.'})
